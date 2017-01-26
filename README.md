@@ -123,13 +123,12 @@ to design and to execute and very error prone.
 
 Examples of threaded servers are:
 
-- Tomcat,
-- Jetty,
-- Undertow,
-- Glassfish,
-- JBoss AS,
-- Wildfly,
-- Websphere,
+- Tomcat
+- Jetty
+- Glassfish
+- JBoss AS
+- Wildfly
+- Websphere
 - ...
 
 ## Evented servers
@@ -138,6 +137,16 @@ Evented servers have one thread/process per CPU core and use non-blocking IO:
 - Node.js
 - Netty
 - Akka
+- Undertow
+
+## Hybrid Threaded/Evented servers
+These frameworks are hybrid because they support the combination of sequential evaluation of expressions which is mostly
+cpu bounded and asynchronous message passing which is mostly IO bounded by means of the asynchronous threaded design
+of Scala Futures, the evented design of Netty and can leverage asynchronous messaging and supervision model of the Akka
+toolkit. This hybrid design of being both threaded, evented and message driven is what the reactive components that
+Lightbend designs, develops and supports bring to the table in the form of two very developer friendly frameworks
+Lagomframework and the Playframework, so we will add Play and Lagom to our list.
+
 - Play
 - Lagom
 
