@@ -1,0 +1,13 @@
+# swagger
+GET        /api-docs              controllers.ApiHelpController.getResources
+GET        /api-docs/*path        controllers.ApiHelpController.getResource(path: String)
+
+# build-info
+GET        /api/info              com.github.dnvriend.component.info.controller.BuildInfoController.info
+
+# ping
+GET        /api/ping              com.github.dnvriend.component.ping.controller.PingController.ping
+
+# Google
+GET        /api/compose           com.github.dnvriend.component.google.controller.GoogleController.compose
+    

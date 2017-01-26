@@ -1,0 +1,15 @@
+/RUNNING_PID
+/logs/
+/project/*-shim.sbt
+/project/project/
+/project/target/
+/target/
+/.idea/
+/.vscode/
+*.iml
+*.hi
+*.o
+writefile
+writefile.txt
+/frege/
+*.png
