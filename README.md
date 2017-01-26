@@ -237,6 +237,8 @@ In the Evented world, all I/O runs in parallel by default and "execute this code
 natural and consistent.
 
 ## Hybrid approaches
+...
+
 
 ## Scala Futures
 Futures provide a way to reason about performing many operations in parallel or sequential in an efficient
@@ -297,8 +299,6 @@ val f = Future {
 The ForkJoinPool is not designed for long lasting blocking operations. When you need long lasting blocking operations
 the execution model of Scala supports that by adapting Java Executor:
 
-
-
 ## Evented/Async code in Scala/Play
 The Play Framework uses an MVC pattern, which means most of the logic for I/O will live in the Controllers and Models in
 where the Future type plays a key role in the evented execution model.
@@ -320,6 +320,61 @@ by a JDBC driver for communication purposes.
 - Decrease of development times and maintenance risks.
 - More time to focus in business problems and elegant solutions.
 
+## Reactive Streams
+Reactive Streams is an initiative to provide a standard for __asynchronous stream processing__ with non-blocking back pressure.
+This encompasses efforts aimed at runtime environments (JVM and JavaScript) as well as network protocols.
+
+Handling streams of data—especially 'live' data whose volume is not predetermined—requires special care in an asynchronous system.
+The most prominent issue is that resource consumption needs to be controlled such that a fast data source does not overwhelm the
+stream destination. Asynchrony is needed in order to enable the parallel use of computing resources, on collaborating network
+hosts or multiple CPU cores within a single machine.
+
+The main goal of Reactive Streams is to govern the exchange of stream data across an asynchronous boundary—think passing
+elements on to another thread or thread-pool—while ensuring that the receiving side is not forced to buffer arbitrary
+amounts of data. In other words, back pressure is an integral part of this model in order to allow the queues which mediate
+between threads to be bounded. The benefits of asynchronous processing would be negated if the communication of
+back pressure were synchronous, therefore care has to be taken to mandate fully non-blocking and asynchronous behavior
+of all aspects of a Reactive Streams implementation.
+
+It is the intention of this specification to allow the creation of many conforming implementations, which by virtue of abiding
+by the rules will be able to interoperate smoothly, preserving the aforementioned benefits and characteristics across the
+whole processing graph of a stream application.
+
+Reactive Streams started as an initiative in late 2013 between engineers at Netflix, Pivotal and Typesafe (now called 'Lightbend').
+Some of the earliest discussions began in 2013 between the Play and Akka teams at Typesafe. Typesafe is one of the main contributors
+of Reactive Streams. Other contributors include Red Hat, Oracle, Twitter and spray.io. Work is under way to make the Java
+implementation of Reactive Streams part of Java 9, Doug Lea, leader of JSR 166, has proposed a new Flow class that will
+include the interfaces currently provided by Reactive Streams.
+
+Some reactive streams compliant implementations that are relevant to the discussion are:
+
+- [Akka Streams](http://doc.akka.io/docs/akka/2.4/scala/stream/index.html): Akka streams provides basic building blocks and components in the form of the [Alpakka](https://github.com/akka/alpakka) project to build complex processing graphs on the JVM based on the Reactive Streams Specification.
+- [Project Reactor](https://projectreactor.io/): Reactor is a second-generation Reactive library for building non-blocking applications on the JVM based on the Reactive Streams Specification.
+
+## Reactive Systems and Spring
+Spring MVC is the standard way for building microservices which means that you'll need a server that supports the Servlet
+standard and that also means that the execution model that comes out of the box when you use spring (boot) is thread-based, based on blocking
+IO APIs and based on a high level of mutability.
+
+These traits are not the best to build components that other components will come to rely on, as previously discussed in the
+Threaded vs Evented discussion. Of course in the future there will be some areas where the __reactive streams__ compliant component
+can play a part for creating back-pressured event-driven processing pipelines. As of Januari 2017 the libraries are not yet
+production ready and not yet production proven.
+
+Building reactive systems means recognising which parts of the system is message based and which part of the system is stream based.
+When it comes to Spring, the way to do inter-service communication is REST and that is implemented by means of Spring-MVC which means
+that you'll need a Servlet based server which means a threaded blocking model.
+
+Having so many blocking APIs at your disposal is a real risk when choosing to use spring-boot. When reading up on the subject
+I got the feeling that there are indeed some APIs that behave in a non-blocking fashion but it is pick-and-choose wisely.
+
+I can safely conclude that spring-boot is not yet ready to be called 'reactive' but I will admit that there is a lot of choice
+and functionality to quickly build systems out of, but I woudn't call those systems 'reactive' by any stretch of the imagination.
+
+I copied the following verbatim from the [following article](https://spring.io/blog/2016/07/28/reactive-programming-with-spring-5-0-m1) to make my point,
+so be very careful when choosing Spring as the high-available, highly performant __core__ of your reactive system:
+
+> You the developer can choose what’s better for your purposes (non-blocking vs blocking). If anyone tells you that synchronous or blocking is evil look the other way. It’s not and in reality it is a trade-off. Imperative style logic is simple to write and simpler to debug. Sure it doesn’t scale as well or as efficiently but that’s where the trade-off comes. There will always be many cases where imperative is just fine for the task at hand and others where reactive and non-blocking are a must. In a microservices scenario, you may even choose the implementation style per individual service, all within the same consistent programming model.
 
 ## Runtime dependency injection vs Compile-time dependency injection
 - Cake pattern vs Runtime dependency injection
@@ -343,6 +398,8 @@ Spring-boot Takes an opinionated view of building Spring applications. Spring Bo
 and is designed to get you up and running as quickly as possible.
 
 Spring-boot embeds Tomcat, Jetty or [JBoss Undertow](http://undertow.io/).
+
+Spring-boot
 
 ### Lagomframework
 Lagom is a microservices framework ... runs on top of Play and uses Netty
@@ -474,6 +531,8 @@ High Keep Alive : Blocking IO requires to block until the keepalive time for the
 Better Performance on High Load : Because in blocking IO has one thread per connection, it requires n threads for n connections. As the value n increases, the performance degrades because more thread context switching.
 
 ## Resources
+- [The Reactive Manifesto](http://www.reactivemanifesto.org/)
+- [Reactive Streams](http://www.reactive-streams.org/)
 - [Threaded vs Evented Servers - Mark McGranaghan](https://mmcgrana.github.io/2010/07/threaded-vs-evented-servers.html)
 - [Asynchronous processing support in Servlet 3.0 Why asynchronous processing is the new foundation of Web 2.0](http://www.javaworld.com/article/2077995/java-concurrency/java-concurrency-asynchronous-processing-support-in-servlet-3-0.html)
 - [Servlet 3.1 Asynchronous IO and Jetty-9.1](https://webtide.com/servlet-3-1-async-io-and-jetty/)
@@ -488,6 +547,8 @@ Better Performance on High Load : Because in blocking IO has one thread per conn
 - [Play Framework: async I/O without the thread pool and callback hell - Yevgeniy Brikman](https://engineering.linkedin.com/play/play-framework-async-io-without-thread-pool-and-callback-hell)
 - [Futures and Promises](http://docs.scala-lang.org/overviews/core/futures.html)
 - [Choosing an ExecutorService](http://blog.jessitron.com/2014/01/choosing-executorservice.html)
+- [Reactive Programming with Spring 5.0 M1](https://spring.io/blog/2016/07/28/reactive-programming-with-spring-5-0-m1)
+- [Reactor - a foundation for asynchronous applications on the JVM](https://spring.io/blog/2013/05/13/reactor-a-foundation-for-asynchronous-applications-on-the-jvm)
 
 ## Youtube
 - [The Play Framework at LinkedIn: Productivity and Performance at Scale - Jim Brikman](https://www.youtube.com/watch?v=8z3h4Uv9YbE)
