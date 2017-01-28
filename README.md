@@ -2,28 +2,32 @@
 A small study project on the capabilities of reactive frameworks like [spring-boot](http://projects.spring.io/spring-boot/),
 the [Lagomframework](http://www.lagomframework.com/) and the [Playframework](https://www.playframework.com/).
 
-## Disclaimer
-Not yet finished
-
-- how to position each of these frameworks (reactive vs good choice),
-- the state of these three frameworks,
-- how to make a choice between these three and maybe have a hybrid platform
-
 ## TL;DR
-When dealing with state-of-the-art microservice components we are talking about high performance software development
-and high performance, low latency throughputs. These kinds of systems are called reactive systems and need fundamental
+When dealing with state-of-the-art microservice components we are talking about high performance computing
+and low latency throughputs. These kinds of systems are called reactive systems and need fundamental
 design principles in where these reactive traits are intrinsicly present in every little part of the system, from the
 IO driver to the computational model. When compared to traditional JEE-based frameworks this means a shift in both
-the computational paradigm and communication models and also means a change in the required tooling.
+the computational paradigm which means functional and composable and the communication models which means
+asynchronous messaging combined with asynchronous back-pressured event-streams in the form of a unified log.
 
 Being intrinsicly reactive in every aspect of the design does __not__ mean small little changes in the current framework design
 like with Servlet 3.0 and Servlet 3.1 and call it a day. Most of the time it means either a complete redesign or carefully
 picking the right tooling for the job.
 
-Reactive Systems do sequential evaluation of expressions which is mostly cpu bounded and asynchronous message passing which is
-mostly IO bounded which means being purely evented or being purely threaded are not the traits these kinds of systems need.
-These kinds of systems needs a hybrid approach of both threaded and evented and that is what Netty in combination with the
-actor model brings to the table in the form of both the playframework and Lagom.
+Reactive Systems do sequential evaluation of expressions which are mostly cpu bounded and asynchronous message passing which is
+mostly IO bounded. These kinds of systems needs a hybrid approach of both threaded and evented and that is what [Netty](http://netty.io/)
+in combination with the Actor model in the form of [Akka](http://akka.io/) paired with [Scala](http://www.scala-lang.org/)
+a high performance, strongly typed, object-functional programming language that supports asynchronous computations in the form
+of Scala Futures that executes computations on highly tuned thread pools requiring only a minmum amount of threads, provide.
+These separate components combined into a platform provide a unique execution model never before seen to the JVM and are
+a requirement for building reactive systems which are high performance, low latency computing systems and are available
+in the form of both the [Playframework](https://www.playframework.com/) and [Lagomframework](http://www.lagomframework.com/).
+
+For the unified log [Apache Kafka](http://kafka.apache.org/) is the de-facto component of choice and the system is paired
+with [Apache Cassandra](http://cassandra.apache.org/) for storage of aggegated data that has been crunched by
+[Apache Spark](http://spark.apache.org/). The system also needs a computing clustering management platform in the form of
+[Apache Mesos](http://mesos.apache.org/) combined with [Lightbend ConductR](https://conductr.lightbend.com/) to schedule
+and configure the reactive components.
 
 ## Reactive Systems - a Recap
 Systems built as Reactive Systems are more flexible, loosely-coupled and scalable.
@@ -123,21 +127,26 @@ to design and to execute and very error prone.
 
 Examples of threaded servers are:
 
-- Tomcat
-- Jetty
-- Glassfish
-- JBoss AS
-- Wildfly
-- Websphere
-- ...
+- [Apache Tomcat](http://tomcat.apache.org/)
+- [Jetty](https://eclipse.org/jetty/)
+- [Glassfish](https://glassfish.java.net/)
+- [JBoss AS](http://jbossas.jboss.org/)
+- [Wildfly](http://wildfly.org/)
+- [IBM Websphere](http://www-03.ibm.com/software/products/en/appserv-was)
 
 ## Evented servers
-Evented servers have one thread/process per CPU core and use non-blocking IO:
+Evented servers have one thread/process per CPU core and use non-blocking IO. They require that all operations
+are non-blocking. When for some reason a subsystem does block like for example when writing to a serial device
+like a file system or a (blocking) database, than these systems suffer from serious performance issues so non
+blocking computations and IO are a must!
 
-- Node.js
-- Netty
-- Akka
-- Undertow
+Examples of evented servers are:
+
+- [Node.js](https://nodejs.org/en/)
+- [Netty](http://netty.io/)
+- [Akka](http://akka.io/)
+- [Undertow](http://undertow.io/)
+- [Project Reactor](https://projectreactor.io/)
 
 ## Hybrid Threaded/Evented servers
 These frameworks are hybrid because they support the combination of sequential evaluation of expressions which is mostly
@@ -147,8 +156,10 @@ toolkit. This hybrid design of being both threaded, evented and message driven i
 Lightbend designs, develops and supports bring to the table in the form of two very developer friendly frameworks
 Lagomframework and the Playframework, so we will add Play and Lagom to our list.
 
-- Play
-- Lagom
+Examples of hybrid Threaded/Evented platforms are:
+
+- [Playframework](https://www.playframework.com/): An open source web application framework optimized for high performance computing and a building block for creating reactive systems that provides a developer friendy, quick turnaround developing and deployment model which is unique in its kind,
+- [Lagomframework](http://www.lagomframework.com/): An open source microservice framework that builds on playframework but provides an opinionated best practices way for building reactive systems using the microservice architectural style that provides a develoer friendly, quick turnaround for developing and deploying reactive systems using the microservice architectural style, is unique in its kind,
 
 ## Threaded vs Evented
 Broadly speaking, there are two ways to handle concurrent requests to a server. Threaded servers use multiple concurrently-executing
@@ -236,89 +247,29 @@ and flexibility goes down.
 In the Evented world, all I/O runs in parallel by default and "execute this code later" is a core concept that will feel
 natural and consistent.
 
-## Hybrid approaches
-...
+## The Hybrid Threaded/Evented model
+Being purely threaded or being purely evented goes so far in real world scenarios. The sweet spot lies in the middle, a system
+should be evented but also should be threaded and the system should optimally scale up or down depending on the current load
+that the system experiences. Hybrid systems like the [Playframework](https://www.playframework.com/) and [Lagomframework](http://www.lagomframework.com/)
+do just that. Based on eventing the system can schedule work to be done and when a thread is ready a job can be executed on a thread,
+and those thread pools are elastic. This hybrid design could only be created by completly redesigning the execution model that
+until now traditionally was provided by JEE servers or JEE compliant platforms like Spring.
 
+Examples of hybrid approaches are:
 
-## Scala Futures
-Futures provide a way to reason about performing many operations in parallel or sequential in an efficient
-and non-blocking way. A Future is a placeholder object for a value that may not yet exist. Generally, the value of
-the Future is supplied concurrently and can subsequently be used. Composing concurrent tasks in this way tends to
-result in faster, asynchronous, non-blocking parallel code.
+- [Playframework](https://www.playframework.com/): An open source web application framework optimized for high performance computing and a building block for creating reactive systems that provides a developer friendy, quick turnaround developing and deployment model which is unique in its kind,
+- [Lagomframework](http://www.lagomframework.com/): An open source microservice framework that builds on playframework but provides an opinionated best practices way for building reactive systems using the microservice architectural style that provides a develoer friendly, quick turnaround for developing and deploying reactive systems using the microservice architectural style, is unique in its kind,
 
-By default, futures and promises are non-blocking, making use of callbacks instead of typical blocking operations.
-To simplify the use of callbacks both syntactically and conceptually, Scala provides combinators such as flatMap,
-foreach, and filter used to compose futures in a non-blocking way. Blocking is still possible for cases where it is
-absolutely necessary, futures can be blocked on (although this is discouraged).
+## When the hybrid model is not enough
+Being hybrid is not enough in reactive systems. Just receiving messages and queueing these request waiting for a thread to be available
+can only get you so far. The system-as-a-whole should respond to each other when one system for some reason starts queueing up requests.
+For this reason a separate communication stream that communicates demand is defined where first demand is requested by the downstream
+component and the upstream component supplies that much messaging as the demand can handle. Communicating demand this way makes for a
+very dynamic system and the effect is called back-pressure and should of course be done in a non-blocking way.
 
-### Execution Context
-Future and Promises revolve around [ExecutionContext](http://www.scala-lang.org/api/2.12.1/scala/concurrent/ExecutionContext.html)s,
-responsible for executing computations.
-
-An [ExecutionContext](http://www.scala-lang.org/api/2.12.1/scala/concurrent/ExecutionContext.html) is similar to an Executor:
-it is free to execute computations in a new thread, in a pooled thread or in the current thread
-(although executing the computation in the current thread is discouraged.
-
-The scala.concurrent package comes out of the box with an [ExecutionContext implementation](http://www.scala-lang.org/api/2.12.1/scala/concurrent/ExecutionContext$$Implicits$.html#global:scala.concurrent.ExecutionContext),
-a global static thread pool which is called 'the global execution context' and is backed by a work-stealing thread pool.
-By default 'the global execution context' is backed by a work-stealing thread pool that uses a target number of worker threads equal to the number of
-available processors.
-
-Users are free to extend the ExecutionContext trait to implement their own execution contexts, although this should only
-be done in rare cases.
-
-### Global ExecutionContext
-The 'global execution context' is an ExecutionContext backed by a ForkJoinPoolPool. It should be sufficient for most
-situations but requires some care. A ForkJoinPool manages a limited amount of threads (the maximum amount of thread
-being referred to as parallelism level). The number of concurrently blocking computations can exceed the parallelism
-level only if each blocking call is wrapped inside a blocking call. Otherwise, there is a risk that the thread pool
-in the global execution context is starved, and no computation can proceed.
-
-By default the ExecutionContext.global sets the parallelism level of its underlying fork-join pool to the amount of
-available processors. This configuration can be overridden by setting one (or more) of the following VM attributes:
-
-- scala.concurrent.context.minThreads - defaults to Runtime.availableProcessors
-- scala.concurrent.context.numThreads - can be a number or a multiplier (N) in the form ‘xN’ ; defaults to Runtime.availableProcessors
-- scala.concurrent.context.maxThreads - defaults to Runtime.availableProcessors
-
-As stated above the ForkJoinPool can increase the amount of threads beyond its parallelismLevel in the presence of blocking
-computation. As explained in the ForkJoinPool API, this is only possible if the pool is explicitly notified in code:
-
-```scala
-import scala.concurrent.Future
-import scala.concurrent.blocking
-import scala.concurrent.ExecutionContext.Implicits.global
-
-val f = Future {
-  blocking {
-    // do your blocking operation here
-  }
-}
-```
-
-The ForkJoinPool is not designed for long lasting blocking operations. When you need long lasting blocking operations
-the execution model of Scala supports that by adapting Java Executor:
-
-## Evented/Async code in Scala/Play
-The Play Framework uses an MVC pattern, which means most of the logic for I/O will live in the Controllers and Models in
-where the Future type plays a key role in the evented execution model.
-
-A Controller in play is simply a function from Request => Future[Result] in which something like Ok("Hello World!") is a
-result and a Future represents an asynchronous operation. A Future is a container that eventually sometime in the future
-will contain a Result type like Ok.
-
-Play contains a scarse amount of threads, out of the box one thread-per-cpu but this amount can be configured. The Future
-is a key player in the architecture in where code blocks are being scheduled awaiting execution in an evented manner.
-A thread that is available will be assigned to evaluate the scheduled code block and when done maybe another code block
-will be scheduled as per sequential association of the Future composition using for-comprehension to do the
-sequential evaluation of all the composed code blocks. These asynchronous and evented way fits perfectly on the
-threaded and evented hybrid execution model of play where an assigned thread can be 'hijacked' for some time for example
-by a JDBC driver for communication purposes.
-
-## Scala
-- Reduced boilerplate code and Scala’s concise nature.
-- Decrease of development times and maintenance risks.
-- More time to focus in business problems and elegant solutions.
+The [Reactive Streams Specification](http://www.reactive-streams.org/) provides a standard for asynchronous stream processing with
+non-blocking back pressure that defines the just described mechanism. The [Playframework](https://www.playframework.com/) and
+[Lagomframework](http://www.lagomframework.com/) provide the reactive streams machanism.
 
 ## Reactive Streams
 Reactive Streams is an initiative to provide a standard for __asynchronous stream processing__ with non-blocking back pressure.
@@ -376,38 +327,83 @@ so be very careful when choosing Spring as the high-available, highly performant
 
 > You the developer can choose what’s better for your purposes (non-blocking vs blocking). If anyone tells you that synchronous or blocking is evil look the other way. It’s not and in reality it is a trade-off. Imperative style logic is simple to write and simpler to debug. Sure it doesn’t scale as well or as efficiently but that’s where the trade-off comes. There will always be many cases where imperative is just fine for the task at hand and others where reactive and non-blocking are a must. In a microservices scenario, you may even choose the implementation style per individual service, all within the same consistent programming model.
 
-## Runtime dependency injection vs Compile-time dependency injection
-- Cake pattern vs Runtime dependency injection
+## Modes of concurrency
+We now know that in reactive systems the execution model is very different than in traditional web frameworks like JEE
+and Spring. We can summize that there are four modes of concurrency in systems, from best (1) to worst (4):
 
-## Akka
-Akka takes care of the heavy lifting of our dual requirements for fault tolerance andelastic clustering.
+1. Asynchronous and non-blocking (excellent)
+2. Asynchronous and blocking (acceptable)
+3. Synchronous and non-blocking (meh)
+4. Synchronous and blocking (awful!)
 
-## Introduction
-Sometimes people ask me, especially when they already have invested in Java and Spring why there is a need to move
-to a reactive, message driven architecture like with the Lagomframework and the Playframework.
+Traditional web frameworks use the synchronous and blocking concurrency model which is mode 4 and is the traditional
+JEE API. Reactive frameworks strive to provide a mode (1) asynchronous and non-blocking execution model and the Lagomframework
+and Playframework provides such an execution model. Most of the time the execution model still doesn't get better than
+mode 2 which is asynchronous and blocking for some pieces of the system and that is party because of the serialization
+services that a systems needs like for example reading or writing to a file, communicating with a database. Most IO operations
+do have some blocking quality in it, enforced by eg. the Linux kernel, security constraints, JDBC request/response cycles,
+memory sychronization between context switch, sufficive to say a technical reason.
 
-...
+Hybrid frameworks like Play and Lagom can isolate these blocking parts, which needs upfront design, and the concurrency
+model is (2) for some parts of the system and (1) for most parts of the system. When used with the most modern subsystems
+like Apache Cassandra and Apache Kafka like with Lagom the concurrency model is (1) which is excellent!
 
-Lets look at the different frameworks first
+## Where does Spring fit really?
+Sometimes people ask me, especially when they already have invested in Java and Spring why investing in a new paradigm,
+execution model and tooling is a necessity when the Spring vendor communicates that the traditional execution model
+has been brought up to spec with some small alterations and is good enough for building a reactive system which is
+based on a message driven architecture, event streaming processing pipelines and structured using the microservice
+architecture style with API first design using many of the APIs developers already know and just providing some
+asynchronous callbacks and you'll get a concurrency (2) mode so Asynchronous and blocking mode.
 
-## The frameworks
-...
+To answer this, lets look at the frameworks first
 
 ### Spring-Boot
 Spring-boot Takes an opinionated view of building Spring applications. Spring Boot favors convention over configuration
-and is designed to get you up and running as quickly as possible.
+and is designed to get you up and running as quickly as possible. Spring reuses a lot of the legacy APIs and provides,
+a mode (2) concurrency model but doesn't enforce it for only the spring-mvc part so for providing asynchronous REST services.
 
-Spring-boot embeds Tomcat, Jetty or [JBoss Undertow](http://undertow.io/).
+Spring-boot embeds Tomcat, Jetty or Undertow which are all servlet containers and all except undertow uses the thread-per-request
+model but if you are not careful you will get a mode (4) concurrency model (synchronous and blocking) which is not good for
+building a reactive system.
 
-Spring-boot
+Spring provides a lot out of the box like a runtime platform (server), cloud services like service-discovery, runtime configuration,
+circuit breakers, cloud database connectors, integration and batch standards, too much to name.
 
-### Lagomframework
-Lagom is a microservices framework ... runs on top of Play and uses Netty
+That there is so much to choose from can sound great, must it really isn't. A good platform should be 'full-stack' which means
+it should provide highly optimized APIs and a documented pattern for using these APIs together in a certain way.
+If you are working with a 'full-stack' platform, you know that you’ll be able to make the separate components work together
+optimally and you are certain that you are working with a good designed application architecture.
+
+Spring gives many options and a lot of those options don't work well together in context of a reactive system. It isn't good
+enough to just have a batch processing framework, like with spring-batch, you should have an elastic scalable reactive batch
+processing framework like Hadoop or even better Apache Spark.
+
+Spring doesn't enforce the goals of reactive systems and focusses too much on integrating cool new features and enabling them
+using annotations which seem like a good idea when creating singleton services, but when it comes on the execution model and
+you end up with mode (4) components that must be composed together the system will just not perform correctly which is a shame.
+
+I guess the gist is that you just cannot compose a system based on a down-scaled legacy-based n-tier architecture from
+yesterday. You need a new execution model, adopt a new computational paradigm based on pure computations in where
+the evaluation can be expressed rather than imperatively written down making the system inflexible in the evaluation order
+and optimization strategies, isolation of functionality;failure;read/write;bounded context;immutable record of facts vs query model,
+messaging and distribution, dual communication streams (demand/message), basically you need a new paradigm and architecture
+and the two are incomparable.
 
 ### Playframework
-Play is a web framework ... runs and uses Netty v3.5.7
+The Playframework (Play) is a modern, efficient, cloud-ready web-server with a strong focus on developer productivity. Play is
+the basic building block of a modern reactive system that is structured using the microservice architecture with API first in mind.
 
-Play is one of the easier Scala Frameworks to use
+Play is build on Netty a NIO based client-server asynchronous event-driven network application framework for
+developing high performance protocol servers and on Akka a distributed computing toolkit that brings resilience
+and elasticity to the JVM. Although Play supports a full features Java based API the development experience
+really shines when Play is used with Scala, a hybrid object-functional general purpose programming language,
+bringing the best aspects of both approaches to help developers craft elegant software.
+
+### Lagomframework
+Lagom is an opinionated microservices framework that builds on Play and provides a unique developer friendly way
+to easily create reactive microservice based systems that is based on CQRS and event sourcing and Apache Kafka,
+a distributed streaming platform used to build real time data-pipelines between your services.
 
 ## Server engines
 Lets take a look at the server engines that are used by the three frameworks.
@@ -434,8 +430,6 @@ When looking at the servers one thing sticks out, Tomcat, Jetty and Undertow are
 being a stack of interfaces so you can do both blocking and non-blocking IO and the non-blocking part of JEE seems like an
 afterthought. When looking at the Java stack its obvious that the frameworks are biased for mutability, transactional, thread-per-request,
 blocking IO and when you want to defer from this bias things gets ackward.
-
-Netty
 
 ## JSR-315/Servlet 3.0
 In December 2009 the Servlet 3.0 specification was released as a part of Java EE 6. This was an important release
@@ -505,11 +499,7 @@ class ProcessingController {
 }
 ```
 
-We also need to create a callback handler that will eventually be 'called-back' which is the 'ProcessingTask' class:
-
-```
-
-```
+We also need to create a callback handler that will eventually be 'called-back' which is the 'ProcessingTask'.
 
 ## Non-blocking
 Non-blocking I/O has been supported by the Java platform since 2002 with Java SE v1.4 and its API’s called New I/O (NIO).
@@ -518,17 +508,22 @@ such as Jetty and Netty, evolved to fill the gaps and today they provide a solid
 specific API’s.
 
 ## Blocking and Non-blocking
-The key objective of being asynchronous is to avoid blocking.  Every blocked thread represents wasted resources as the memory allocated to each thread is significant and is essentially idle whenever it blocks.
+The key objective of being asynchronous is to avoid blocking.  Every blocked thread represents wasted resources as the
+memory allocated to each thread is significant and is essentially idle whenever it blocks.
 
-Blocking also makes your server vulnerable to thread starvation. Consider a server with 200 threads in it’s thread pool.  If 200 requests for large content are received from slow clients, then the entire server thread pool may be consumed by threads blocking to write content to those slow clients.    Asynchronous IO allows the threads to be reused to handle other requests while the slow clients are handled with minimal resources.
+Blocking also makes your server vulnerable to thread starvation. Consider a server with 200 threads in it’s thread pool.
+If 200 requests for large content are received from slow clients, then the entire server thread pool may be consumed by
+threads blocking to write content to those slow clients. Asynchronous IO allows the threads to be reused to handle other
+requests while the slow clients are handled with minimal resources.
 
-Jetty has long used such asynchronous IO when serving static content and now Servlet 3.1 makes this feature available to standards based applications as well.
+Jetty has long used such asynchronous IO when serving static content and now Servlet 3.1 makes this feature available
+to standards based applications as well.
 
 Non Blocking IO has the following advantages:
 
-Highly Scalable : Because no-more you require one thread per client. It can effectively support more number of clients.
-High Keep Alive : Blocking IO requires to block until the keepalive time for the next request. Non-Blocking being notification model, it can support high keepalive times.
-Better Performance on High Load : Because in blocking IO has one thread per connection, it requires n threads for n connections. As the value n increases, the performance degrades because more thread context switching.
+- Highly Scalable: Because no-more you require one thread per client. It can effectively support more number of clients.
+- High Keep Alive: Blocking IO requires to block until the keepalive time for the next request. Non-Blocking being notification model, it can support high keepalive times.
+- Better Performance on High Load: Because in blocking IO has one thread per connection, it requires n threads for n connections. As the value n increases, the performance degrades because more thread context switching.
 
 ## Resources
 - [The Reactive Manifesto](http://www.reactivemanifesto.org/)
@@ -545,6 +540,7 @@ Better Performance on High Load : Because in blocking IO has one thread per conn
 - [Exploring the virtues of microservices with Play and Akka](https://zeroturnaround.com/rebellabs/exploring-the-virtues-of-microservices-with-play-and-akka/)
 - [Play framework and async I/O - Yevgeniy Brikman](https://engineering.linkedin.com/34/play-framework-and-async-io)
 - [Play Framework: async I/O without the thread pool and callback hell - Yevgeniy Brikman](https://engineering.linkedin.com/play/play-framework-async-io-without-thread-pool-and-callback-hell)
+- [Work Stealing: What Makes the Play Framework Fast - Kevin Webber](https://blog.redelastic.com/work-stealing-what-makes-the-play-framework-fast-4b71fa7758d5#.bpj17ghu9)
 - [Futures and Promises](http://docs.scala-lang.org/overviews/core/futures.html)
 - [Choosing an ExecutorService](http://blog.jessitron.com/2014/01/choosing-executorservice.html)
 - [Reactive Programming with Spring 5.0 M1](https://spring.io/blog/2016/07/28/reactive-programming-with-spring-5-0-m1)
