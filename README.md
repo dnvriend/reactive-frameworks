@@ -269,7 +269,7 @@ very dynamic system and the effect is called back-pressure and should of course 
 
 The [Reactive Streams Specification](http://www.reactive-streams.org/) provides a standard for asynchronous stream processing with
 non-blocking back pressure that defines the just described mechanism. The [Playframework](https://www.playframework.com/) and
-[Lagomframework](http://www.lagomframework.com/) provide the reactive streams machanism.
+[Lagomframework](http://www.lagomframework.com/) provide the reactive streams mechanism.
 
 ## Reactive Streams
 Reactive Streams is an initiative to provide a standard for __asynchronous stream processing__ with non-blocking back pressure.
@@ -524,6 +524,9 @@ Non Blocking IO has the following advantages:
 - Highly Scalable: Because no-more you require one thread per client. It can effectively support more number of clients.
 - High Keep Alive: Blocking IO requires to block until the keepalive time for the next request. Non-Blocking being notification model, it can support high keepalive times.
 - Better Performance on High Load: Because in blocking IO has one thread per connection, it requires n threads for n connections. As the value n increases, the performance degrades because more thread context switching.
+
+## Conclusion
+For the conclusion please read the [TL;DR](https://github.com/dnvriend/reactive-frameworks#tldr).
 
 ## Resources
 - [The Reactive Manifesto](http://www.reactivemanifesto.org/)
