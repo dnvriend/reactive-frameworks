@@ -531,6 +531,7 @@ For the conclusion please read the [TL;DR](https://github.com/dnvriend/reactive-
 ## Resources
 - [The Reactive Manifesto](http://www.reactivemanifesto.org/)
 - [Reactive Streams](http://www.reactive-streams.org/)
+- [Asynchronous Programming and Scala - Alexandru Nedelcu](https://alexn.org/blog/2017/01/30/asynchronous-programming-scala.html)
 - [Threaded vs Evented Servers - Mark McGranaghan](https://mmcgrana.github.io/2010/07/threaded-vs-evented-servers.html)
 - [Asynchronous processing support in Servlet 3.0 Why asynchronous processing is the new foundation of Web 2.0](http://www.javaworld.com/article/2077995/java-concurrency/java-concurrency-asynchronous-processing-support-in-servlet-3-0.html)
 - [Servlet 3.1 Asynchronous IO and Jetty-9.1](https://webtide.com/servlet-3-1-async-io-and-jetty/)
@@ -559,3 +560,5 @@ For the conclusion please read the [TL;DR](https://github.com/dnvriend/reactive-
 - [Optimizing Play for Production - Lightbend](https://www.youtube.com/watch?v=cnPPLpIk9mo)
 - [Revitalizing Aging Architectures with Microservices - Lightbend](https://www.youtube.com/watch?v=SPGCdziXlHU)
 - [Reactive Revealed 1/3: Async NIO, Back-pressure and Message-driven vs Event-driven - Konrad Malawski](https://www.youtube.com/watch?v=fNEZtx1VVAk)
+- [It is tough to be an application in 2016. Lagom can help - Katrin Shechtman](https://www.youtube.com/watch?v=DrqUY5ngT3k)
+
